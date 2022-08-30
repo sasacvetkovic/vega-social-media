@@ -7,17 +7,12 @@ import Home from "pages/Home/HomePage";
 import Authentication from "pages/Authentication/AuthenticationPage";
 //Utils
 import PrivateRoutes from "utils/router/privateRoutes";
-import {auth} from 'utils/firebase/firebase.utils'
 
 function App() {
-  const data = useContext(UserContext)
-  console.log(auth, 'currentUser' in auth);
-
-  console.log(auth.currentUser, 'sa current');
-  console.log(data, 'cur');
+  const { currentUser } = useContext(UserContext);
   return (
     <Routes>
-      <Route element={<PrivateRoutes currentUser={auth.currentUser}/>}>
+      <Route element={<PrivateRoutes currentUser={currentUser} />}>
         <Route index element={<Home />} />
       </Route>
       <Route path="login" element={<Authentication />} />

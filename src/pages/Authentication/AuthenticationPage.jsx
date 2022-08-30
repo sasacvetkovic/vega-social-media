@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Grid, GridItem, Image, Box, Center } from "@chakra-ui/react";
-
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "contexts/user.context";
 import SignInForm from "components/SignInForm/";
 import SignUpForm from "components/SignUpForm/";
 import peoplePhoto from "assets/people.jpg";
 
 const Authentication = () => {
   const [isSignup, setIsSignUp] = useState(false);
+  const { currentUser } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
+
   return (
     <Box
       display="flex"
