@@ -22,7 +22,6 @@ const Nabvar = () => {
       px="20px"
       py="5px"
       boxShadow="xs"
-      rounded="md"
       bg="white"
     >
       <Image src={logoImage} h="50px" w="50px" />

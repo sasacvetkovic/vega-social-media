@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getAuth,
   signInWithRedirect,
@@ -8,6 +8,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+
 } from "firebase/auth";
 import {
   getFirestore,
@@ -20,6 +21,8 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+import { getStorage } from "firebase/storage";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAikat7hGN-3hG6GNYshITmCT-TRTP6xjw",
   authDomain: "vega-social-media.firebaseapp.com",
@@ -29,7 +32,8 @@ const firebaseConfig = {
   appId: "1:285059873597:web:75c3dcc01fae347c8d2354",
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -123,3 +127,5 @@ export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
+
+export const storage = getStorage();

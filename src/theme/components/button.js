@@ -16,12 +16,19 @@ export const button = {
     primary: {
       backgroundColor: "#f1592a",
       color: "#fff",
-      borderRadius: '9px',
-      marginBottom: '10px'
+      borderRadius: "9px",
+      marginBottom: "10px",
     },
     secondary: {
-      backgroundColor: "red",
-      color: "white",
+      backgroundColor: "#f7f7f7",
+      color: "#888da8",
+      borderRadius: "50px",
+    },
+    publish: {
+      backgroundColor: "#f1592a",
+      color: "#fff",
+
+      borderRadius: "50px",
     },
   },
 };
