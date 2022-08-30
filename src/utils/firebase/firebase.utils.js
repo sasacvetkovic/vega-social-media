@@ -24,12 +24,12 @@ import {
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAikat7hGN-3hG6GNYshITmCT-TRTP6xjw",
-  authDomain: "vega-social-media.firebaseapp.com",
-  projectId: "vega-social-media",
-  storageBucket: "vega-social-media.appspot.com",
-  messagingSenderId: "285059873597",
-  appId: "1:285059873597:web:75c3dcc01fae347c8d2354",
+  apiKey: "AIzaSyBQZs9h6Eu5tvG-qHSXsq4TSklzzbke3gQ",
+  authDomain: "socialmediavg-7dc0e.firebaseapp.com",
+  projectId: "socialmediavg-7dc0e",
+  storageBucket: "socialmediavg-7dc0e.appspot.com",
+  messagingSenderId: "36042903706",
+  appId: "1:36042903706:web:6fc098e31c837c52928f23"
 };
 
 const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();

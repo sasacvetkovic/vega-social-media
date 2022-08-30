@@ -49,21 +49,21 @@ const FeedInput = () => {
       profileImage: currentUser.photoURL,
       timestamp: serverTimestamp(),
     });
-    console.log(selectedFile);
-    console.log(docRef.id);
 
     const imageRef = ref(storage, `posts/${docRef.id}/image`);
+    console.log("run");
+    console.log(docRef);
 
-    // await uploadString(imageRef, selectedFile, "data_url").then(
-    //   async (snapshot) => {
-    //     const downloadUrl = await getDownloadURL(imageRef);
-    //     await updateDoc(doc(db, "posts", docRef.id), {
-    //       image: downloadUrl,
-    //     });
-    // console.log(downloadUrl);
-
-    //   }
-    // );
+    await uploadString(imageRef, selectedFile, "data_url").then(
+      async (snapshot) => {
+        console.log("jeeeej");
+        const downloadUrl = await getDownloadURL(imageRef);
+        await updateDoc(doc(db, "posts", docRef.id), {
+          image: downloadUrl,
+        });
+        // console.log(downloadUrl);
+      }
+    );
     setIsLoading(false);
     setSelectedFile(null);
   };
@@ -72,6 +72,16 @@ const FeedInput = () => {
     inputImageFile.current.click();
   };
 
+  const addImageToPost = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      setSelectedFile(readerEvent.target.result);
+    };
+  };
   return (
     <Container maxw="1800px">
       <Flex
@@ -150,7 +160,7 @@ const FeedInput = () => {
       </Flex>
       <input
         onChange={(e) => {
-          setSelectedFile(e.target.files[0]);
+          addImageToPost(e)
           setPreviewImage(URL.createObjectURL(e.target.files[0]));
         }}
         type="file"
