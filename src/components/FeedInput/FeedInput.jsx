@@ -21,9 +21,11 @@ import { db, storage } from "utils/firebase/firebase.utils";
 
 import { UserContext } from "contexts/user.context";
 import cameraIcon from "assets/camera.svg";
+import closeIcon from "assets/closeButton.png";
 
 const FeedInput = () => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = useContext(UserContext);
   const inputImageFile = useRef(null);
@@ -31,7 +33,7 @@ const FeedInput = () => {
 
   const uploadPost = async () => {
     if (isLoading) return;
-    console.log('enter');
+    console.log("enter");
 
     setIsLoading(true);
 
@@ -79,7 +81,7 @@ const FeedInput = () => {
         mt="25px"
         border="1px solid #e8e8e8"
       >
-        <Flex p="20px" borderBottom="1px solid #e8e8e8">
+        <Flex p="20px" pb="5px">
           <Avatar
             name={currentUser.displayName}
             src={currentUser.photoURL}
@@ -96,7 +98,43 @@ const FeedInput = () => {
             ref={postTextRef}
           />
         </Flex>
-        <Flex py="10px" px="10px" justifyContent="space-between">
+        {previewImage && (
+          <Box w="100%" position="relative">
+            <Image
+              src={previewImage}
+              h="100px"
+              w="100px"
+              objectFit="cover"
+              borderRadius="10px"
+              ml="20px"
+              mb="20px"
+            ></Image>
+
+            <Image
+              onClick={() => {
+                setSelectedFile(null);
+                setPreviewImage(null);
+              }}
+              src={closeIcon}
+              h="25px"
+              w="25px"
+              objectFit="cover"
+              borderRadius="10px"
+              top={-3}
+              left={105}
+              zIndex={3}
+              position="absolute"
+              cursor="pointer"
+            ></Image>
+          </Box>
+        )}
+
+        <Flex
+          py="10px"
+          px="10px"
+          justifyContent="space-between"
+          borderTop="1px solid #e8e8e8"
+        >
           <Box>
             <Button onClick={onButtonClick} variant="secondary">
               <Image src={cameraIcon} w="20px" mr="5px"></Image>
@@ -111,7 +149,10 @@ const FeedInput = () => {
         </Flex>
       </Flex>
       <input
-        onChange={(e) => setSelectedFile(e.target.files[0])}
+        onChange={(e) => {
+          setSelectedFile(e.target.files[0]);
+          setPreviewImage(URL.createObjectURL(e.target.files[0]));
+        }}
         type="file"
         id="file"
         ref={inputImageFile}
