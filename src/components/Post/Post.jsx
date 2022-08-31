@@ -30,6 +30,7 @@ const Post = ({ postData }) => {
   const [likes, setLikes] = useState([]);
 
   useEffect(() => {
+    if(!postId) return
     onSnapshot(collection(db, "posts", postId, "likes"), (snapshot) => {
       setLikes(snapshot.docs);
     });
@@ -105,7 +106,7 @@ const Post = ({ postData }) => {
         </Flex>
         {/* Comments Section */}
         <Flex>
-          <Avatar name="Test" size="sm" />
+          <Avatar src={profileImage.stringValue} name={username.stringValue} size="sm" />
           <Input
             placeholder="Write your comment here"
             size="sm"
