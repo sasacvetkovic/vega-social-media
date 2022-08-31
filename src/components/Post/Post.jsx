@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import CommentItem from "components/CommentItem";
 import { UserContext } from "contexts/user.context";
 import {
   Avatar,
@@ -8,6 +9,8 @@ import {
   Image,
   Text,
   Input,
+  Box,
+  Button,
 } from "@chakra-ui/react";
 import likeIcon from "assets/like.png";
 import likeFilledIcon from "assets/likeFilled.png";
@@ -18,6 +21,10 @@ import {
   setDoc,
   collection,
   onSnapshot,
+  addDoc,
+  serverTimestamp,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { db } from "utils/firebase/firebase.utils";
 
@@ -28,12 +35,25 @@ const Post = ({ postData }) => {
   const userData = useContext(UserContext);
   const [hasLikes, setHasLikes] = useState(false);
   const [likes, setLikes] = useState([]);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    if(!postId) return
+    if (!postId) return;
     onSnapshot(collection(db, "posts", postId, "likes"), (snapshot) => {
       setLikes(snapshot.docs);
     });
+  }, [db, postId]);
+
+  useEffect(() => {
+    if (!postId) return;
+    onSnapshot(
+      query(
+        collection(db, "posts", postId, "comments"),
+        orderBy("timestamp", "desc")
+      ),
+      (snapshot) => setComments(snapshot.docs)
+    );
   }, [db, postId]);
 
   useEffect(() => {
@@ -57,6 +77,23 @@ const Post = ({ postData }) => {
     }
   };
 
+  const submitComment = async (e) => {
+    e.preventDefault();
+
+    const commentToSend = comment;
+    setComment("");
+
+    await addDoc(collection(db, "posts", postId, "comments"), {
+      comment: commentToSend,
+      username: userData.currentUser.displayName,
+      userImage: userData.currentUser.photoURL,
+      timestamp: serverTimestamp(),
+    });
+  };
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
   return (
     <Grid
       templateColumns="repeat(10, 1fr)"
@@ -105,17 +142,39 @@ const Post = ({ postData }) => {
           </Flex>
         </Flex>
         {/* Comments Section */}
-        <Flex>
-          <Avatar src={profileImage.stringValue} name={username.stringValue} size="sm" />
-          <Input
-            placeholder="Write your comment here"
+        <CommentItem/>
+        {/* <Flex>
+          <Avatar
+            src={profileImage.stringValue}
+            name={username.stringValue}
             size="sm"
-            borderRadius="5px"
-            ml="10px"
           />
-        </Flex>
+          <Box position="relative" w="92%">
+            <Input
+              onChange={handleCommentChange}
+              value={comment}
+              placeholder="Write your comment here"
+              size="sm"
+              borderRadius="5px"
+              ml="10px"
+            />
+            <Button
+              onClick={submitComment}
+              background="transparent"
+              color="#f1592a"
+              fontWeight={600}
+              size="xs"
+              position="absolute"
+              top="4px"
+              right={0}
+              zIndex={2}
+            >
+              Post
+            </Button>
+          </Box>
+        </Flex> */}
 
-        <Flex mt="20px">
+        {/* <Flex mt="20px">
           <Avatar name="Coment" size="sm" />
           <Flex
             flexDir="column"
@@ -129,10 +188,10 @@ const Post = ({ postData }) => {
             </Text>
             <Text fontSize="12px" color="#6c757d">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Mollitia, deleniti?
+              Mollitia, deleniti? assaf gsag asg as a
             </Text>
           </Flex>
-        </Flex>
+        </Flex> */}
         {/* Comments Section End */}
       </GridItem>
     </Grid>
