@@ -1,23 +1,40 @@
-import React from "react";
-import {
-  Avatar,
-  Flex,
-  Text,
-  Input,
-  Box,
-  Button,
-} from "@chakra-ui/react";
+import React, { useState, useContext } from "react";
+import { Avatar, Flex, Text, Input, Box, Button } from "@chakra-ui/react";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { UserContext } from "contexts/user.context";
+import { db } from "utils/firebase/firebase.utils";
 
-const CommentItem = () => {
+const CommentItem = ({ profileImage, username, postId, comments }) => {
+  const [comment, setComment] = useState("");
+  const userData = useContext(UserContext);
+
+  const submitComment = async (e) => {
+    e.preventDefault();
+
+    const commentToSend = comment;
+    setComment("");
+
+    await addDoc(collection(db, "posts", postId, "comments"), {
+      comment: commentToSend,
+      username: userData.currentUser.displayName,
+      userImage: userData.currentUser.photoURL,
+      timestamp: serverTimestamp(),
+    });
+  };
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
   return (
     <>
-      <Flex>
+      <Flex my="20px">
         <Avatar
           src={profileImage.stringValue}
           name={username.stringValue}
           size="sm"
         />
-        <Box position="relative" w="92%">
+        <Box position="relative" w="92%" >
           <Input
             onChange={handleCommentChange}
             value={comment}
@@ -41,26 +58,33 @@ const CommentItem = () => {
           </Button>
         </Box>
       </Flex>
-
-      <Flex mt="20px">
-        <Avatar name="Coment" size="sm" />
-        <Flex
-          flexDir="column"
-          ml="10px"
-          bg="#edf2f6"
-          borderRadius="10px"
-          p="7px"
-        >
-          <Text fontSize="12px" fontWeight={600}>
-            Sasa Cvetkovic
-          </Text>
-          <Text fontSize="12px" color="#6c757d">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Mollitia,
-            deleniti? assaf gsag asg as a
-          </Text>
-        </Flex>
-      </Flex>
-      {/* Comments Section End */}
+      {comments.map((commnetItem, index) => {
+        const { userImage, username, comment } =
+          commnetItem._document.data.value.mapValue.fields;
+        return (
+          <Flex key={index} mt="7px">
+            <Avatar
+              src={userImage.stringValue}
+              name={username.stringValue}
+              size="sm"
+            />
+            <Flex
+              flexDir="column"
+              ml="10px"
+              bg="#edf2f6"
+              borderRadius="10px"
+              p="7px"
+            >
+              <Text fontSize="12px" fontWeight={600}>
+                {username.stringValue}
+              </Text>
+              <Text fontSize="12px" color="#6c757d">
+                {comment.stringValue}
+              </Text>
+            </Flex>
+          </Flex>
+        );
+      })}
     </>
   );
 };
