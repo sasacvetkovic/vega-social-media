@@ -75,10 +75,10 @@ const FeedInput = () => {
   };
 
   return (
-    <Container maxw="1800px">
+    <Container maxW='container.sm'>
       <Flex
         bg="#ffffff"
-        borderRadius="lg"
+        borderRadius="10px"
         flexDir="column"
         mt="25px"
         border="1px solid #e8e8e8"
