@@ -18,7 +18,6 @@ import {
 } from "firebase/firestore";
 import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import { db, storage } from "utils/firebase/firebase.utils";
-
 import { UserContext } from "contexts/user.context";
 import cameraIcon from "assets/camera.svg";
 import closeIcon from "assets/closeButton.png";
@@ -33,15 +32,7 @@ const FeedInput = () => {
 
   const uploadPost = async () => {
     if (isLoading) return;
-    console.log("enter");
-
     setIsLoading(true);
-
-    // create a post add to firestore
-    // get the host id
-    // upload the image to firebase storage
-    // get a download URL from fb storage with the post ID
-    // get a downloaded URL from fb storage and update the original post with image
 
     const docRef = await addDoc(collection(db, "posts"), {
       username: currentUser.displayName,
@@ -51,21 +42,20 @@ const FeedInput = () => {
     });
 
     const imageRef = ref(storage, `posts/${docRef.id}/image`);
-    console.log("run");
-    console.log(docRef);
 
     await uploadString(imageRef, selectedFile, "data_url").then(
       async (snapshot) => {
-        console.log("jeeeej");
         const downloadUrl = await getDownloadURL(imageRef);
         await updateDoc(doc(db, "posts", docRef.id), {
           image: downloadUrl,
         });
-        // console.log(downloadUrl);
       }
     );
+
     setIsLoading(false);
     setSelectedFile(null);
+    setPreviewImage(null);
+    postTextRef.current.value = "";
   };
 
   const onButtonClick = () => {
@@ -80,8 +70,10 @@ const FeedInput = () => {
 
     reader.onload = (readerEvent) => {
       setSelectedFile(readerEvent.target.result);
+      setPreviewImage(URL.createObjectURL(e.target.files[0]));
     };
   };
+
   return (
     <Container maxw="1800px">
       <Flex
@@ -153,16 +145,13 @@ const FeedInput = () => {
           </Box>
           <Box>
             <Button onClick={uploadPost} variant="publish">
-              Publish
+              {isLoading ? "Loading" : "Publish"}
             </Button>
           </Box>
         </Flex>
       </Flex>
       <input
-        onChange={(e) => {
-          addImageToPost(e)
-          setPreviewImage(URL.createObjectURL(e.target.files[0]));
-        }}
+        onChange={addImageToPost}
         type="file"
         id="file"
         ref={inputImageFile}
