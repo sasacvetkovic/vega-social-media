@@ -11,15 +11,15 @@ const Posts = () => {
       query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshot) => {
         setPosts(snapshot.docs);
-        console.log(snapshot.docs[0]._document.data.value.mapValue);
       }
     );
-  
   }, []);
 
   return (
-    <Container maxW='container.sm'>
-      <Post/>
+    <Container maxW="container.sm">
+      {posts.map((item, index) => {
+        return <Post postData={item} key={index}/>;
+      })}
     </Container>
   );
 };

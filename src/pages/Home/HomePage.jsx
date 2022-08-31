@@ -7,7 +7,7 @@ import { Box } from "@chakra-ui/react";
 const Home = () => {
   return (
     <>
-      <Box background="#f4f4f4" h="100vh">
+      <Box background="#f4f4f4">
         <Navbar />
         <FeedInput />
         <Posts />

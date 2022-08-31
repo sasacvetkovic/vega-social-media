@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { UserContext } from "contexts/user.context";
 import {
   Avatar,
   Flex,
@@ -9,9 +10,52 @@ import {
   Input,
 } from "@chakra-ui/react";
 import likeIcon from "assets/like.png";
+import likeFilledIcon from "assets/likeFilled.png";
 import commentIcon from "assets/comment.png";
+import {
+  deleteDoc,
+  doc,
+  setDoc,
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "utils/firebase/firebase.utils";
 
-const Post = () => {
+const Post = ({ postData }) => {
+  const { caption, image, profileImage, timestamp, username } =
+    postData._document.data.value.mapValue.fields;
+  const postId = postData._document.key.path.segments[6];
+  const userData = useContext(UserContext);
+  const [hasLikes, setHasLikes] = useState(false);
+  const [likes, setLikes] = useState([]);
+
+  useEffect(() => {
+    onSnapshot(collection(db, "posts", postId, "likes"), (snapshot) => {
+      setLikes(snapshot.docs);
+    });
+  }, [db, postId]);
+
+  useEffect(() => {
+    setHasLikes(
+      likes.findIndex((like) => like.id === userData.currentUser.uid) !== -1
+    );
+  }, [likes]);
+
+  const likePost = async () => {
+    if (hasLikes) {
+      await deleteDoc(
+        doc(db, "posts", postId, "likes", userData.currentUser.uid)
+      );
+    } else {
+      await setDoc(
+        doc(db, "posts", postId, "likes", userData.currentUser.uid),
+        {
+          username: userData.currentUser.displayName,
+        }
+      );
+    }
+  };
+
   return (
     <Grid
       templateColumns="repeat(10, 1fr)"
@@ -23,25 +67,33 @@ const Post = () => {
       gap="15px"
     >
       <GridItem colSpan={1} w="100%">
-        <Avatar src="https://bit.ly/dan-abramov" name="Dan Abrahmov" />
+        <Avatar src={profileImage.stringValue} name={username.stringValue} />
       </GridItem>
       <GridItem colSpan={9} w="100%">
         <Text fontSize="md" mt="5px" fontWeight={600}>
-          Sasa Cvetkovic
+          {username.stringValue}
+        </Text>
+        <Text fontSize="12px" fontWeight={300} color="#6c757d" mb="15px">
+          {`${new Date(
+            timestamp.timestampValue
+          ).toLocaleDateString()} ${new Date(
+            timestamp.timestampValue
+          ).toLocaleTimeString()}`}
         </Text>
         <Text color="#6c757d" lineHeight="1.4" mt="5px" mb="20px">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem expedita
-          corrupti aut repellat quo aliquam unde alias velit cumque obcaecati?
+          {caption.stringValue}
         </Text>
-        <Image
-          src="https://images.pexels.com/photos/1757363/pexels-photo-1757363.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          borderRadius="5px"
-        />
+        {image && <Image src={image.stringValue} borderRadius="5px" />}
         <Flex my="16px">
           <Flex mr="70px">
-            <Image w="20px" src={likeIcon} />
+            <Image
+              onClick={likePost}
+              w="20px"
+              src={hasLikes ? likeFilledIcon : likeIcon}
+              cursor="pointer"
+            />
             <Text size="13px" color="#6c757d" ml="5px">
-              25
+              {likes.length}
             </Text>
           </Flex>
           <Flex>

@@ -40,17 +40,19 @@ const FeedInput = () => {
       profileImage: currentUser.photoURL,
       timestamp: serverTimestamp(),
     });
+    
+    if (selectedFile) {
+      const imageRef = ref(storage, `posts/${docRef.id}/image`);
 
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
-
-    await uploadString(imageRef, selectedFile, "data_url").then(
-      async (snapshot) => {
-        const downloadUrl = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "posts", docRef.id), {
-          image: downloadUrl,
-        });
-      }
-    );
+      await uploadString(imageRef, selectedFile, "data_url").then(
+        async (snapshot) => {
+          const downloadUrl = await getDownloadURL(imageRef);
+          await updateDoc(doc(db, "posts", docRef.id), {
+            image: downloadUrl,
+          });
+        }
+      );
+    }
 
     setIsLoading(false);
     setSelectedFile(null);
@@ -75,7 +77,7 @@ const FeedInput = () => {
   };
 
   return (
-    <Container maxW='container.sm'>
+    <Container maxW="container.sm">
       <Flex
         bg="#ffffff"
         borderRadius="10px"
