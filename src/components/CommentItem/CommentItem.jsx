@@ -7,7 +7,7 @@ import { db } from "utils/firebase/firebase.utils";
 const CommentItem = ({ profileImage, username, postId, comments }) => {
   const [comment, setComment] = useState("");
   const userData = useContext(UserContext);
-
+  console.log(userData)
   const submitComment = async (e) => {
     e.preventDefault();
 
@@ -30,8 +30,8 @@ const CommentItem = ({ profileImage, username, postId, comments }) => {
     <>
       <Flex my="20px">
         <Avatar
-          src={profileImage.stringValue}
-          name={username.stringValue}
+          src={userData.currentUser.photoURL}
+          name={userData.currentUser.displayName}
           size="sm"
         />
         <Box position="relative" w="92%" >

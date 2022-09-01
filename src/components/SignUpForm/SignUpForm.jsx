@@ -14,17 +14,27 @@ const defaultFormFields = {
 
 function SignUpForm({ setIsSignUp }) {
   const [formFields, setFormFields] = useState(defaultFormFields);
+  const [errorMessage, setErrorMessage] = useState("");
   const { displayName, email, password, confirmPassword } = formFields;
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
 
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!isValidEmail(email)) {
+      setErrorMessage("invalid email");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert("passwords do not match");
+      setErrorMessage("passwords do not match");
       return;
     }
 
@@ -36,12 +46,9 @@ function SignUpForm({ setIsSignUp }) {
 
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
+      setErrorMessage("");
     } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        alert("Cannot create user, email already in use");
-      } else {
-        console.log("user creation encountered an error", error);
-      }
+      setErrorMessage(error.code);
     }
   };
 
@@ -66,6 +73,8 @@ function SignUpForm({ setIsSignUp }) {
             placeholder="Enter username"
             name="displayName"
             value={displayName}
+            mb="0"
+            mt="15px"
           />
 
           <FormInput
@@ -74,14 +83,27 @@ function SignUpForm({ setIsSignUp }) {
             placeholder="Enter Email"
             name="email"
             value={email}
+            mb="0"
+            mt="15px"
           />
-
+          {errorMessage === "invalid email" && (
+            <Text fontSize="14px" color="#ed0202" ml="2px">
+              Invalid email
+            </Text>
+          )}
+          {errorMessage === "auth/email-already-in-use" && (
+            <Text fontSize="14px" color="#ed0202" ml="2px">
+              Email is already in use
+            </Text>
+          )}
           <FormInput
             onChange={handleChange}
             type="password"
             placeholder="Enter Password"
             name="password"
             value={password}
+            mb="0"
+            mt="15px"
           />
 
           <FormInput
@@ -90,8 +112,20 @@ function SignUpForm({ setIsSignUp }) {
             placeholder="Confirm Password"
             name="confirmPassword"
             value={confirmPassword}
+            mb="0"
+            mt="15px"
           />
-          <Button onClick={handleSubmit} type="submit">
+          {errorMessage === "passwords do not match" && (
+            <Text fontSize="14px" color="#ed0202" ml="2px">
+              Passwords do not match
+            </Text>
+          )}
+          {errorMessage === "auth/weak-password" && (
+            <Text fontSize="14px" color="#ed0202" ml="2px">
+              Password must be at least 6 characters
+            </Text>
+          )}
+          <Button onClick={handleSubmit} type="submit" mt="15px">
             Sign Up
           </Button>
         </Box>

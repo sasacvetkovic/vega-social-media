@@ -13,6 +13,7 @@ const defaultFormFields = {
 
 const SignInForm = ({ setIsSignUp }) => {
   const [formFields, setFormFields] = useState(defaultFormFields);
+  const [errorMessage, setErrorMessage] = useState("");
   const { email, password } = formFields;
 
   const resetFormFields = () => {
@@ -26,7 +27,7 @@ const SignInForm = ({ setIsSignUp }) => {
       await signInAuthUserWithEmailAndPassword(email, password);
       resetFormFields();
     } catch (error) {
-      console.log("user sign in failed", error);
+      setErrorMessage(error.code);
     }
   };
 
@@ -52,15 +53,35 @@ const SignInForm = ({ setIsSignUp }) => {
           name="email"
           onChange={handleChange}
           value={email}
+          mb="0"
         />
+        {errorMessage === "auth/invalid-email" && (
+          <Text fontSize="14px" color="#ed0202" ml="2px">
+            Invalid email
+          </Text>
+        )}
+        {errorMessage === "auth/user-not-found" && (
+          <Text fontSize="14px" color="#ed0202" ml="2px">
+            User not found
+          </Text>
+        )}
+
         <FormInput
           type="password"
           placeholder="Password"
           name="password"
           onChange={handleChange}
           value={password}
+          mt="15px"
+          mb="0"
         />
-        <Grid w="100%" templateColumns="repeat(2, 1fr)" gap="10px">
+
+        {errorMessage === "auth/wrong-password" && (
+          <Text fontSize="14px" color="#ed0202" ml="2px">
+            Wrong password{" "}
+          </Text>
+        )}
+        <Grid mt="15px" w="100%" templateColumns="repeat(2, 1fr)" gap="10px">
           <Button
             onClick={handleSubmit}
             w="100%"
