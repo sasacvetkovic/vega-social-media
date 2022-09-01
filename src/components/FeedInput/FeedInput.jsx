@@ -40,7 +40,7 @@ const FeedInput = () => {
       profileImage: currentUser.photoURL,
       timestamp: serverTimestamp(),
     });
-    
+
     if (selectedFile) {
       const imageRef = ref(storage, `posts/${docRef.id}/image`);
 

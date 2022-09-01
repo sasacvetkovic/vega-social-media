@@ -5,6 +5,9 @@ import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
 } from "utils/firebase/firebase.utils";
+
+import { updateProfile } from "firebase/auth";
+
 const defaultFormFields = {
   displayName: "",
   email: "",
@@ -43,6 +46,10 @@ function SignUpForm({ setIsSignUp }) {
         email,
         password
       );
+
+      await updateProfile(user, {
+        displayName: displayName,
+      });
 
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
