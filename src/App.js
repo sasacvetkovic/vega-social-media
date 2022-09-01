@@ -12,7 +12,7 @@ function App() {
     <Routes>
       <Route element={<PrivateRoutes />}>
         <Route index element={<Home />} />
-        <Route path="test" element={<SettingsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="login" element={<Authentication />} />
     </Routes>

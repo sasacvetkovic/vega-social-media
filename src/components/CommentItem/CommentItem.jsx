@@ -12,6 +12,7 @@ const CommentItem = ({ profileImage, username, postId, comments }) => {
     e.preventDefault();
 
     const commentToSend = comment;
+    if(!commentToSend) return
     setComment("");
 
     await addDoc(collection(db, "posts", postId, "comments"), {
