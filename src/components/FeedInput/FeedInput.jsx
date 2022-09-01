@@ -60,7 +60,7 @@ const FeedInput = () => {
     postTextRef.current.value = "";
   };
 
-  const onButtonClick = () => {
+  const handleUploadButton = () => {
     inputImageFile.current.click();
   };
 
@@ -140,7 +140,7 @@ const FeedInput = () => {
           borderTop="1px solid #e8e8e8"
         >
           <Box>
-            <Button onClick={onButtonClick} variant="secondary">
+            <Button onClick={handleUploadButton} variant="secondary">
               <Image src={cameraIcon} w="20px" mr="5px"></Image>
               Media
             </Button>

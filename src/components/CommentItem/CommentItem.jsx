@@ -7,7 +7,7 @@ import { db } from "utils/firebase/firebase.utils";
 const CommentItem = ({ profileImage, username, postId, comments }) => {
   const [comment, setComment] = useState("");
   const userData = useContext(UserContext);
-  console.log(userData)
+
   const submitComment = async (e) => {
     e.preventDefault();
 
@@ -42,6 +42,7 @@ const CommentItem = ({ profileImage, username, postId, comments }) => {
             size="sm"
             borderRadius="5px"
             ml="10px"
+            pr='50px'
           />
           <Button
             onClick={submitComment}
