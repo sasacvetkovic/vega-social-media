@@ -8,7 +8,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-
+  updateProfile,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -29,11 +29,12 @@ const firebaseConfig = {
   projectId: "socialmediavg-7dc0e",
   storageBucket: "socialmediavg-7dc0e.appspot.com",
   messagingSenderId: "36042903706",
-  appId: "1:36042903706:web:6fc098e31c837c52928f23"
+  appId: "1:36042903706:web:6fc098e31c837c52928f23",
 };
 
-const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
+const firebaseApp = !getApps().length
+  ? initializeApp(firebaseConfig)
+  : getApp();
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -129,3 +130,9 @@ export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
 
 export const storage = getStorage();
+
+export const updateDisplayName = async (user, newName) => {
+  await updateProfile(user, {
+    displayName: newName,
+  });
+};

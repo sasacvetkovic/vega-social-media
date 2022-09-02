@@ -27,8 +27,14 @@ export const button = {
     publish: {
       backgroundColor: "#f1592a",
       color: "#fff",
-
       borderRadius: "50px",
     },
+    setting: {
+      border: '1px solid #f4f4f4',
+      borderRadius: "10px",
+      color: '#f1592a',
+      fontWeight:'500',
+      ml:'10px'
+    }
   },
 };
