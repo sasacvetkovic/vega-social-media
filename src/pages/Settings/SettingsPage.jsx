@@ -1,23 +1,48 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { UserContext } from "contexts/user.context";
 import { updateDisplayName } from "utils/firebase/firebase.utils";
 import {
   Text,
   Container,
   Box,
-  Center,
   Avatar,
   Divider,
   Flex,
   Button,
 } from "@chakra-ui/react";
 import FormInput from "components/FormInput";
+
 const SettingsPage = () => {
+  const initFormValues = {
+    username: "",
+    email: "",
+    phoneNumber: "",
+    profileImage: null,
+  };
   const { currentUser } = useContext(UserContext);
-  console.log(currentUser);
+  const [formValues, setFormValues] = useState(initFormValues);
+  const [previewImage, setPreviewImage] = useState(null);
+  const inputImageFile = useRef(null);
+
+  const addImageToPost = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+    
+    reader.onload = (readerEvent) => {
+      setFormValues({ ...formValues, profileImage: readerEvent.target.result });
+      setPreviewImage(URL.createObjectURL(e.target.files[0]));
+    };
+  };
+
+  const handleUploadButton = () => {
+    inputImageFile.current.click();
+  };
 
   return (
     <>
+      {console.log(formValues)}
       <Box background="#f4f4f4" height="100vh" pt="20px">
         <Container>
           <Box background="#fff" borderRadius="10px" padding="20px">
@@ -30,7 +55,7 @@ const SettingsPage = () => {
                 src={currentUser.photoURL}
                 size="lg"
               ></Avatar>
-              <Button variant="setting" size="sm">
+              <Button onClick={handleUploadButton} variant="setting" size="sm">
                 Upload
               </Button>
               <Button variant="setting" color="#858585" size="sm">
@@ -43,6 +68,7 @@ const SettingsPage = () => {
               Name
             </Text>
             <FormInput
+              name="username"
               placeholder={currentUser.displayName}
               size="sm"
               borderRadius="5px"
@@ -51,6 +77,8 @@ const SettingsPage = () => {
               Email
             </Text>
             <FormInput
+              name="email"
+
               placeholder={currentUser.email}
               size="sm"
               borderRadius="5px"
@@ -59,16 +87,31 @@ const SettingsPage = () => {
               Phone Number
             </Text>
             <FormInput
+              name="phoneNumber"
               placeholder={currentUser.phoneNumber}
               size="sm"
               borderRadius="5px"
             ></FormInput>
-            <Button variant="setting" background='#f1592a' color="#fff" ml='0' size="sm">
+            <Button
+              onClick={()=>console.log(formValues)}
+              variant="setting"
+              background="#f1592a"
+              color="#fff"
+              ml="0"
+              size="sm"
+            >
               Save changes
             </Button>
           </Box>
         </Container>
       </Box>
+      <input
+        onChange={addImageToPost}
+        type="file"
+        id="file"
+        ref={inputImageFile}
+        style={{ display: "none" }}
+      />
     </>
   );
 };
