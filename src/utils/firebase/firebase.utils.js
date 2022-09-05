@@ -9,6 +9,7 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  updateEmail
 } from "firebase/auth";
 import {
   getFirestore,
@@ -134,5 +135,21 @@ export const storage = getStorage();
 export const updateDisplayName = async (user, newName) => {
   await updateProfile(user, {
     displayName: newName,
+  });
+};
+
+export const updateEmailAddress = async (user, newEmail) => {
+  await updateEmail(user,  newEmail);
+};
+
+export const updateProfilePhoto = async (user, newPhoto) => {
+  await updateProfile(user, {
+    photoURL: newPhoto,
+  });
+};
+
+export const updatePhoneNumber = async (user, newPhoneNumber) => {
+  await updateProfile(user, {
+    phoneNumber: newPhoneNumber,
   });
 };

@@ -1,6 +1,11 @@
 import React, { useState, useContext, useRef } from "react";
 import { UserContext } from "contexts/user.context";
-import { updateDisplayName } from "utils/firebase/firebase.utils";
+import {
+  updateDisplayName,
+  updateEmailAddress,
+  updatePhoneNumber,
+  updateProfilePhoto,
+} from "utils/firebase/firebase.utils";
 import {
   Text,
   Container,
@@ -21,7 +26,7 @@ const SettingsPage = () => {
   };
   const { currentUser } = useContext(UserContext);
   const [formValues, setFormValues] = useState(initFormValues);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(currentUser.photoURL);
   const inputImageFile = useRef(null);
 
   const addImageToPost = (e) => {
@@ -29,15 +34,41 @@ const SettingsPage = () => {
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
     }
-    
+
     reader.onload = (readerEvent) => {
-      setFormValues({ ...formValues, profileImage: readerEvent.target.result });
+      setFormValues({ ...formValues, profileImage: URL.createObjectURL(e.target.files[0]) });
       setPreviewImage(URL.createObjectURL(e.target.files[0]));
     };
   };
 
   const handleUploadButton = () => {
     inputImageFile.current.click();
+  };
+
+  const hanndleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const updateUserInfo = () => {
+    if (formValues.username) {
+      updateDisplayName(currentUser, formValues.username);
+    }
+
+    if(formValues.phoneNumber){
+      updatePhoneNumber(currentUser, formValues.phoneNumber);
+    }
+
+    if(formValues.email){
+      updateEmailAddress(currentUser, formValues.email);
+    }
+
+    if(formValues.profileImage){
+      console.log(previewImage)
+      console.log(formValues.profileImage)
+      updateProfilePhoto(currentUser, previewImage);
+    }
+
   };
 
   return (
@@ -52,7 +83,7 @@ const SettingsPage = () => {
             <Flex alignItems="center">
               <Avatar
                 name={currentUser.displayName}
-                src={currentUser.photoURL}
+                src={previewImage}
                 size="lg"
               ></Avatar>
               <Button onClick={handleUploadButton} variant="setting" size="sm">
@@ -68,6 +99,8 @@ const SettingsPage = () => {
               Name
             </Text>
             <FormInput
+              onChange={hanndleInputChange}
+              value={formValues.username}
               name="username"
               placeholder={currentUser.displayName}
               size="sm"
@@ -77,8 +110,9 @@ const SettingsPage = () => {
               Email
             </Text>
             <FormInput
+              onChange={hanndleInputChange}
+              value={formValues.email}
               name="email"
-
               placeholder={currentUser.email}
               size="sm"
               borderRadius="5px"
@@ -87,13 +121,15 @@ const SettingsPage = () => {
               Phone Number
             </Text>
             <FormInput
+              onChange={hanndleInputChange}
+              value={formValues.phoneNumber}
               name="phoneNumber"
               placeholder={currentUser.phoneNumber}
               size="sm"
               borderRadius="5px"
             ></FormInput>
             <Button
-              onClick={()=>console.log(formValues)}
+              onClick={updateUserInfo}
               variant="setting"
               background="#f1592a"
               color="#fff"
